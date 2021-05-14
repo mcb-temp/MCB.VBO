@@ -28,6 +28,7 @@ namespace MCB.VBO.Microservices.Statements
         {
 
             services.AddControllers();
+            services.AddHealthChecks();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MCB.VBO.Microservices.Statements", Version = "v1" });

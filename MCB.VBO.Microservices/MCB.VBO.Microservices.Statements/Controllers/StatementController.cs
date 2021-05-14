@@ -2,7 +2,12 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
-using System.Net.Http;
+using MCB.VBO.Microservices.Statements.Repositories;
+using System;
+using System.Linq;
+using MCB.VBO.Microservices.Statements.Shared.Models;
+using MCB.VBO.TemplatesLib.Builders;
+using MCB.VBO.TemplatesLib;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
 {
@@ -12,42 +17,62 @@ namespace MCB.VBO.Microservices.Statements.Controllers
     {
         private readonly ILogger<StatementController> _logger;
 
-        private readonly IWebHostEnvironment _appEnvironment;
+        private readonly StatementRepository _repository;
 
         public StatementController(ILogger<StatementController> logger, IWebHostEnvironment appEnvironment)
         {
             _logger = logger;
+            _repository = new StatementRepository();
         }
 
         [HttpPost("create")]
-        public int Create()
+        public Guid Create(DateTime fromDate, DateTime tillDate)
         {
-            return 0;
+            return _repository.Create(fromDate, tillDate).Id;
         }
 
         [HttpGet("status")]
-        public int GetStatus()
+        public int GetStatus(Guid id)
         {
-            return 0;
+            StatementData data = _repository.Retrive(id);
+
+            Random r = new Random(DateTime.Now.Millisecond);
+            if (data.Status == StatusEnum.New && r.Next(0, 9) > 5)
+            {
+                data.Status = StatusEnum.InProgress;
+            }
+            else if (data.Status == StatusEnum.InProgress && r.Next(0, 9) > 7)
+            {
+                data.Status = StatusEnum.Complete;
+            }
+            _repository.Update(data);
+
+            return (int)data.Status;
         }
 
         [HttpGet("download")]
-        public IActionResult GetStatementFile()
+        public IActionResult GetStatementFile(Guid id)
         {
-            HttpClient httpClient = new HttpClient();
-            templateServiceClient client = new templateServiceClient("https://localhost:55002/swagger", httpClient);
+            WordDocumentBuilder builder = new WordDocumentBuilder();
+            DocumentDirector director = new DocumentDirector();
 
-            var result = client.WeatherForecastAsync();
-            result.Wait();
+            StatementData data = _repository.Retrive(id);
 
-            //return result.Result;
-            return new JsonResult("meh");
+            director.CreateWordDoc(builder, data);
+            var mem = builder.GetResult();
+
+            return new FileStreamResult(mem, "application/octet-stream")
+            {
+                FileDownloadName = $"{id}.docx"
+            };
         }
 
         [HttpGet("history")]
-        public IEnumerable<string> GetHistory()
+        public IEnumerable<StatementHistoryItem> GetHistory()
         {
-            return new[] { "1", "2", "3" };
+            var statementsList = _repository.GetHistory();
+
+            return statementsList.Select(s => new StatementHistoryItem { Id = s.Id, Name = s.Name, Status = (int)s.Status });
         }
     }
 }

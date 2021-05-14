@@ -16,6 +16,12 @@ namespace MCB.VBO.Microservices.Templates.Controllers
             _logger = logger;
         }
 
+        [HttpPost]
+        public int GenerateDocument(int templateId, int documentId)
+        {
+            return documentId;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
