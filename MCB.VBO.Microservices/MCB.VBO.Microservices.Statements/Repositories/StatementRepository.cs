@@ -37,8 +37,8 @@ namespace MCB.VBO.Microservices.Statements.Repositories
                 StatementTransaction st = new StatementTransaction();
                 st.Amount = r.Next(0, 1000000);
                 st.Date = fromDate.AddDays(i);
-                st.Recipient = $"{r.Next(1000000):6}{r.Next(1000000):6}";
-                st.Sender = $"{r.Next(1000000):6}{r.Next(1000000):6}";
+                st.Recipient = $"{r.Next(1000000),6}{r.Next(1000000),6}";
+                st.Sender = $"{r.Next(1000000),6}{r.Next(1000000),6}";
 
                 statement.StatementTransactions.Add(st);
             }
@@ -72,7 +72,7 @@ namespace MCB.VBO.Microservices.Statements.Repositories
             {
                 string statementJson = File.ReadAllText(file);
 
-                StatementData sd =JsonConvert.DeserializeObject<StatementData>(statementJson);
+                StatementData sd = JsonConvert.DeserializeObject<StatementData>(statementJson);
 
                 data.Add(sd);
             }
@@ -82,8 +82,8 @@ namespace MCB.VBO.Microservices.Statements.Repositories
 
         private void Save(StatementData statement)
         {
-            string filePath = Path.Combine(_dbPath, $"{statement.Id}.json"); 
-            
+            string filePath = Path.Combine(_dbPath, $"{statement.Id}.json");
+
             string stetementJson = JsonConvert.SerializeObject(statement);
 
             File.WriteAllText(filePath, stetementJson);

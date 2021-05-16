@@ -16,40 +16,25 @@ namespace MCB.VBO.TemplatesLib.Builders
         private MemoryStream _memoryStream;
         private WordprocessingDocument _wordDocument;
 
+        private MainDocumentPart MainDocumentPart => _wordDocument.MainDocumentPart;
+        private Document Document => _wordDocument.MainDocumentPart.Document;
+        private Body Body => _wordDocument.MainDocumentPart.Document.Body;
+
+        private string _docsPath { get; }
 
         public WordDocumentBuilder()
         {
+            _docsPath = Path.Combine(AppContext.BaseDirectory, "tempDocs");
+
+            if (!Directory.Exists(_docsPath))     // Create the log directory if it doesn't exist
+                Directory.CreateDirectory(_docsPath);
+
             _memoryStream = new MemoryStream();
             _wordDocument = WordprocessingDocument.Create(_memoryStream, WordprocessingDocumentType.Document, true);
             MainDocumentPart mainPart = _wordDocument.AddMainDocumentPart();
-            new Document(new Body()).Save(mainPart);
-           
-            /*
-            // Create Stream
-            using (MemoryStream mem = new MemoryStream())
-            {
-                // Create Document
-                using (WordprocessingDocument wordDocument =
-                    WordprocessingDocument.Create(mem, WordprocessingDocumentType.Document, true))
-                {
-                    // Add a main document part. 
-                    MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-
-                    // Create the document structure and add some text.
-                    mainPart.Document = new Document();
-                    Body docBody = new Body();
-
-                    // Add your docx content here
-                }
-
-                // Download File
-                //Context.Response.AppendHeader("Content-Disposition", String.Format("attachment;filename=\"0}.docx\"", MyDocxTitle));
-                //mem.Position = 0;
-                //mem.CopyTo(Context.Response.OutputStream);
-                //Context.Response.Flush();
-                //Context.Response.End();
-            }
-            */
+            mainPart.Document = new Document();
+            Document.Body = new Body();
+            Document.Save(mainPart);
         }
 
         public void BuildHeader(StatementData data)
@@ -65,9 +50,26 @@ namespace MCB.VBO.TemplatesLib.Builders
             r.Append(t);
             p.Append(r);
             // Add your paragraph to docx body
-            _wordDocument.MainDocumentPart.Document.Body.Append(p);
-            _wordDocument.Save();
-            _wordDocument.MainDocumentPart.Document.Save();
+            Body.Append(p);
+            Document.Save();
+            //_wordDocument.Save();
+        }
+
+        public void BuildFooter()
+        {
+            Paragraph p = new Paragraph();
+            ParagraphProperties pp = new ParagraphProperties();
+            pp.Justification = new Justification() { Val = JustificationValues.Center };
+            // Add paragraph properties to your paragraph
+            p.Append(pp);
+            // Run
+            Run r = new Run();
+            Text t = new Text($"Дата / Подпись") { Space = SpaceProcessingModeValues.Preserve };
+            r.Append(t);
+            p.Append(r);
+            // Add your paragraph to docx body
+            Body.Append(p);
+            Document.Save();
         }
 
         public void BuildTable(List<StatementTransaction> statementTransactions)
@@ -101,9 +103,38 @@ namespace MCB.VBO.TemplatesLib.Builders
 
             TableCell tc14 = new TableCell();
             Paragraph p14 = new Paragraph(new Run(new Text("Получатель")));
-            tc13.Append(p14);
+            tc14.Append(p14);
             tr1.Append(tc14);
 
+
+            foreach (var statementTransaction in statementTransactions)
+            {
+                TableRow tr = new TableRow();
+
+                TableCell tc1 = new TableCell();
+                Paragraph p1 = new Paragraph(new Run(new Text(statementTransaction.Date.ToLongDateString())));
+                tc1.Append(p1);
+                tr.Append(tc1);
+
+                TableCell tc2 = new TableCell();
+                Paragraph p2 = new Paragraph(new Run(new Text(statementTransaction.Amount.ToString())));
+                tc2.Append(p2);
+                tr.Append(tc2);
+
+                TableCell tc3 = new TableCell();
+                Paragraph p3 = new Paragraph(new Run(new Text(statementTransaction.Sender)));
+                tc3.Append(p3);
+                tr.Append(tc3);
+
+                TableCell tc4 = new TableCell();
+                Paragraph p4 = new Paragraph(new Run(new Text(statementTransaction.Recipient)));
+                tc4.Append(p4);
+                tr.Append(tc4);
+
+                table.Append(tr);
+            }
+
+            /*
             TableRow tr2 = new TableRow();
 
             TableCell tc21 = new TableCell();
@@ -121,20 +152,29 @@ namespace MCB.VBO.TemplatesLib.Builders
 
             tr2.Append(tc22);
             table.Append(tr2);
+            */
 
             // Add your table to docx body
-            _wordDocument.MainDocumentPart.Document.Body.Append(table);
-            _wordDocument.Save();
-            _wordDocument.MainDocumentPart.Document.Save();
+            Body.Append(table);
+            Document.Save();
+            //_wordDocument.Save();
+
         }
 
         public Stream GetResult()
         {
-            MemoryStream stream = new MemoryStream(_memoryStream.Capacity);
-            _memoryStream.Position = 0;
-            _memoryStream.CopyTo(stream);
-            stream.Position = 0;
+            //string path = Path.Combine(_docsPath, $"{Guid.NewGuid()}.docx");
+            //_wordDocument.SaveAs(path);
 
+            MemoryStream stream = new MemoryStream();
+            _wordDocument.Clone(stream, false);
+
+            //byte[] byteArray = File.ReadAllBytes(path);
+            //MemoryStream stream = new MemoryStream(byteArray);
+
+            //_memoryStream.Position = 0;
+            //_memoryStream.CopyTo(stream);
+            stream.Position = 0;
             return stream;
         }
 

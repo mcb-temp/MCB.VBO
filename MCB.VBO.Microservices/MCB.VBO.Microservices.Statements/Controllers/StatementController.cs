@@ -8,6 +8,7 @@ using System.Linq;
 using MCB.VBO.Microservices.Statements.Shared.Models;
 using MCB.VBO.TemplatesLib.Builders;
 using MCB.VBO.TemplatesLib;
+using System.Threading.Tasks;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
 {
@@ -51,7 +52,7 @@ namespace MCB.VBO.Microservices.Statements.Controllers
         }
 
         [HttpGet("download")]
-        public IActionResult GetStatementFile(Guid id)
+        public async Task<FileStreamResult> GetStatementFile(Guid id)
         {
             WordDocumentBuilder builder = new WordDocumentBuilder();
             DocumentDirector director = new DocumentDirector();

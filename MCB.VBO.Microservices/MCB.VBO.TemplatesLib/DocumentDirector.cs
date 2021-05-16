@@ -19,6 +19,7 @@ namespace MCB.VBO.TemplatesLib
         {
             builder.BuildHeader(statement);
             builder.BuildTable(statement.StatementTransactions);
+            builder.BuildFooter();
         }
     }
 }
