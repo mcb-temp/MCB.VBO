@@ -15,6 +15,10 @@ namespace MCB.VBO.Microservices.Statements.Shared.Models
 
         public StatusEnum Status { get; set; }
 
+        public DateTime fromDate { get; set; }
+
+        public DateTime tillDate { get; set; }
+
         public StatementData()
         {
             StatementTransactions = new List<StatementTransaction>();

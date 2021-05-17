@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCB.VBO.TemplatesLib", "MCB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCB.VBO.Microservices.Statements.Shared", "MCB.VBO.Microservices.Statements.Shared\MCB.VBO.Microservices.Statements.Shared.csproj", "{E9CB4F07-420C-455B-AFC6-2E5AD1B551C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCB.VBO.TestConsole", "MCB.VBO.TestConsole\MCB.VBO.TestConsole.csproj", "{9F0C4467-5033-4A73-9481-3194FFF6BC38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCB.VBO.TestConsole", "MCB.VBO.TestConsole\MCB.VBO.TestConsole.csproj", "{9F0C4467-5033-4A73-9481-3194FFF6BC38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCB.VBO.Microservices.Statements.Tests", "MCB.VBO.Microservices.Statements.Tests\MCB.VBO.Microservices.Statements.Tests.csproj", "{1D915344-7FDC-4949-BD5F-FDDD79A79171}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9F0C4467-5033-4A73-9481-3194FFF6BC38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F0C4467-5033-4A73-9481-3194FFF6BC38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F0C4467-5033-4A73-9481-3194FFF6BC38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D915344-7FDC-4949-BD5F-FDDD79A79171}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D915344-7FDC-4949-BD5F-FDDD79A79171}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D915344-7FDC-4949-BD5F-FDDD79A79171}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D915344-7FDC-4949-BD5F-FDDD79A79171}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
