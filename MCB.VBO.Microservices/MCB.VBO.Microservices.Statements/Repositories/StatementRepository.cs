@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MCB.VBO.Microservices.Statements.Repositories
 {
@@ -11,7 +12,7 @@ namespace MCB.VBO.Microservices.Statements.Repositories
     {
         private string _dbPath { get; }
 
-        public Timer Timer { get; set; }
+        //public Timer Timer { get; set; }
 
         public StatementRepository()
         {
@@ -20,8 +21,8 @@ namespace MCB.VBO.Microservices.Statements.Repositories
             if (!Directory.Exists(_dbPath))     // Create the log directory if it doesn't exist
                 Directory.CreateDirectory(_dbPath);
 
-            var autoEvent = new AutoResetEvent(false);
-            Timer = new Timer(ProcessStatement, autoEvent, 20000, (int)(60000 * 0.25));
+            //var autoEvent = new AutoResetEvent(false);
+            //Timer = new Timer(ProcessStatement, autoEvent, 20000, (int)(60000 * 0.25));
         }
 
         public void ProcessStatement(Object stateInfo)
@@ -73,7 +74,49 @@ namespace MCB.VBO.Microservices.Statements.Repositories
             statement.tillDate = tillDate;
 
             Save(statement);
+            Task.Factory.StartNew(() =>
+            {
+                StatementProcessActionAsync(statement);
+            });
             return statement;
+        }
+
+        private void StatementProcessActionAsync(StatementData sd)
+        {
+            Task.Delay(10000);
+            switch (sd.Status)
+            {
+                case StatusEnum.New:
+                    sd.Status = StatusEnum.InProgress;
+                    break;
+
+                case StatusEnum.InProgress:
+                    sd.Status = StatusEnum.Complete;
+
+                    TimeSpan ts = sd.tillDate - sd.fromDate;
+                    double days = ts.TotalDays >= 1 ? ts.TotalDays : 1;
+
+                    Random r = new Random(DateTime.Now.Millisecond);
+                    for (int i = 0; i <= days; i++)
+                    {
+                        StatementTransaction st = new StatementTransaction();
+                        st.Amount = r.Next(0, 1000000);
+                        st.Date = sd.fromDate.AddDays(i);
+                        st.Recipient = $"{r.Next(1000000),6}{r.Next(1000000),6}";
+                        st.Sender = $"{r.Next(1000000),6}{r.Next(1000000),6}";
+
+                        sd.StatementTransactions.Add(st);
+                    }
+                    break;
+            }
+            Update(sd);
+            if (sd.Status != StatusEnum.Complete)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    StatementProcessActionAsync(sd);
+                });
+            }
         }
 
         public StatementData Retrive(Guid id)

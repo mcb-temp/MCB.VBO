@@ -2,6 +2,7 @@ using NUnit.Framework;
 using MCB.VBO.Microservices.Statements.Repositories;
 using System;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MCB.VBO.Microservices.Statements.Tests
 {
@@ -29,7 +30,21 @@ namespace MCB.VBO.Microservices.Statements.Tests
         [Test(ExpectedResult = 30)]
         public async Task<int> StatementRepository_2()
         {
-            return await Return30();
+            StatementRepository repository = new StatementRepository();
+
+            DateTime fromDate = new DateTime(2020, 01, 01);
+            DateTime tillDate = new DateTime(2021, 01, 01);
+
+            var statement = repository.Create(fromDate, tillDate);
+
+            Assert.NotNull(statement);
+            Assert.IsTrue(statement.Id is Guid);
+
+            Thread.Sleep(1500);
+
+            statement = repository.Retrive(statement.Id);
+            return (int)statement.Status;
+
             /*StatementRepository repository = new StatementRepository();
 
             DateTime fromDate = new DateTime(2020, 01, 01);
