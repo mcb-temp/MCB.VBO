@@ -9,6 +9,7 @@ using MCB.VBO.Microservices.Statements.Shared.Models;
 using MCB.VBO.TemplatesLib.Builders;
 using MCB.VBO.TemplatesLib;
 using System.Threading.Tasks;
+using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
 {
@@ -18,12 +19,12 @@ namespace MCB.VBO.Microservices.Statements.Controllers
     {
         private readonly ILogger<StatementController> _logger;
 
-        private readonly StatementRepository _repository;
+        private readonly IStatementRepository _repository;
 
-        public StatementController(ILogger<StatementController> logger, IWebHostEnvironment appEnvironment)
+        public StatementController(ILogger<StatementController> logger, IStatementRepository repository)
         {
             _logger = logger;
-            _repository = new StatementRepository();
+            _repository = repository;
         }
 
         [HttpPost("create")]
@@ -71,7 +72,7 @@ namespace MCB.VBO.Microservices.Statements.Controllers
         [HttpGet("history")]
         public IEnumerable<StatementHistoryItem> GetHistory()
         {
-            var statementsList = _repository.GetHistory();
+            var statementsList = _repository.ListAll();
 
             return statementsList.Select(s => new StatementHistoryItem { Id = s.Id, Name = s.Name, Status = (int)s.Status });
         }

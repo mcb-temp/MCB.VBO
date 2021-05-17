@@ -1,18 +1,16 @@
-﻿using MCB.VBO.Microservices.Statements.Shared.Models;
+﻿using MCB.VBO.Microservices.Statements.Shared.Interfaces;
+using MCB.VBO.Microservices.Statements.Shared.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MCB.VBO.Microservices.Statements.Repositories
 {
-    public class StatementRepository
+    public class StatementRepository : IStatementRepository
     {
         private string _dbPath { get; }
-
-        //public Timer Timer { get; set; }
 
         public StatementRepository()
         {
@@ -20,47 +18,6 @@ namespace MCB.VBO.Microservices.Statements.Repositories
 
             if (!Directory.Exists(_dbPath))     // Create the log directory if it doesn't exist
                 Directory.CreateDirectory(_dbPath);
-
-            //var autoEvent = new AutoResetEvent(false);
-            //Timer = new Timer(ProcessStatement, autoEvent, 20000, (int)(60000 * 0.25));
-        }
-
-        public void ProcessStatement(Object stateInfo)
-        {
-            var files = Directory.GetFiles(_dbPath);
-            foreach (var file in files)
-            {
-                string statementJson = File.ReadAllText(file);
-                StatementData sd = JsonConvert.DeserializeObject<StatementData>(statementJson);
-
-                switch (sd.Status)
-                {
-                    case StatusEnum.New:
-                        sd.Status = StatusEnum.InProgress;
-                        break;
-
-                    case StatusEnum.InProgress:
-                        sd.Status = StatusEnum.Complete;
-
-                        TimeSpan ts = sd.tillDate - sd.fromDate;
-                        double days = ts.TotalDays >= 1 ? ts.TotalDays : 1;
-
-                        Random r = new Random(DateTime.Now.Millisecond);
-                        for (int i = 0; i <= days; i++)
-                        {
-                            StatementTransaction st = new StatementTransaction();
-                            st.Amount = r.Next(0, 1000000);
-                            st.Date = sd.fromDate.AddDays(i);
-                            st.Recipient = $"{r.Next(1000000),6}{r.Next(1000000),6}";
-                            st.Sender = $"{r.Next(1000000),6}{r.Next(1000000),6}";
-
-                            sd.StatementTransactions.Add(st);
-                        }
-                        break;
-                }
-
-                Update(sd);
-            }
         }
 
         public StatementData Create(DateTime fromDate, DateTime tillDate)
@@ -136,7 +93,7 @@ namespace MCB.VBO.Microservices.Statements.Repositories
             File.Delete(filePath);
         }
 
-        public List<StatementData> GetHistory()
+        public List<StatementData> ListAll()
         {
             List<StatementData> data = new List<StatementData>();
 
