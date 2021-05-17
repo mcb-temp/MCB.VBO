@@ -29,6 +29,7 @@ namespace MCB.VBO.Microservices.Statements
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IStatementRepository, StatementRepository>();
+
             services.AddControllers();
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>

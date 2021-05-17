@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MCB.VBO.Microservices.Statements.Repositories
@@ -20,7 +21,7 @@ namespace MCB.VBO.Microservices.Statements.Repositories
                 Directory.CreateDirectory(_dbPath);
         }
 
-        public StatementData Create(DateTime fromDate, DateTime tillDate)
+        public (Guid, Task<StatementData>) Create(DateTime fromDate, DateTime tillDate)
         {
             StatementData statement = new StatementData();
 
@@ -31,16 +32,16 @@ namespace MCB.VBO.Microservices.Statements.Repositories
             statement.tillDate = tillDate;
 
             Save(statement);
-            Task.Factory.StartNew(() =>
+
+            return (statement.Id, Task<StatementData>.Factory.StartNew(() =>
             {
-                StatementProcessActionAsync(statement);
-            });
-            return statement;
+                return StatementProcessActionAsync(statement);
+            }));
         }
 
-        private void StatementProcessActionAsync(StatementData sd)
+        private StatementData StatementProcessActionAsync(StatementData sd)
         {
-            Task.Delay(10000);
+            Thread.Sleep(1000);
             switch (sd.Status)
             {
                 case StatusEnum.New:
@@ -66,7 +67,9 @@ namespace MCB.VBO.Microservices.Statements.Repositories
                     }
                     break;
             }
+
             Update(sd);
+
             if (sd.Status != StatusEnum.Complete)
             {
                 Task.Factory.StartNew(() =>
@@ -74,6 +77,8 @@ namespace MCB.VBO.Microservices.Statements.Repositories
                     StatementProcessActionAsync(sd);
                 });
             }
+
+            return sd;
         }
 
         public StatementData Retrive(Guid id)

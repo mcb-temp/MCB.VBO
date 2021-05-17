@@ -30,7 +30,7 @@ namespace MCB.VBO.Microservices.Statements.Controllers
         [HttpPost("create")]
         public Guid Create(DateTime fromDate, DateTime tillDate)
         {
-            return _repository.Create(fromDate, tillDate).Id;
+            return _repository.Create(fromDate, tillDate).Item1;
         }
 
         [HttpGet("status")]

@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MCB.VBO.TestConsole
 {
@@ -10,6 +11,11 @@ namespace MCB.VBO.TestConsole
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Start");
+            Task.Delay(3000).ContinueWith(x => Console.WriteLine("Delay"));
+            Console.WriteLine("Finish");
+            Console.ReadKey();
+            /*
             byte[] byteArray = File.ReadAllBytes("temp2.docx");
             using (MemoryStream mem = new MemoryStream())
             {
@@ -25,7 +31,7 @@ namespace MCB.VBO.TestConsole
                 {
                     mem.WriteTo(fileStream);
                 }
-            }
+            }*/
 
             /*
             // Add a main document part. 

@@ -36,12 +36,12 @@ namespace MCB.VBO.Microservices.Statements.Tests
                 fromDate = It.IsAny<DateTime>(),
                 tillDate = It.IsAny<DateTime>()
             };
-            repository.Setup(x => x.Create(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(willBeReturn);
+            /*repository.Setup(x => x.Create(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(willBeReturn);
 
             StatementController statementController = new StatementController(logger.Object, repository.Object);
             var result = statementController.Create(fromDate, tillDate);
 
-            Assert.IsTrue(result == newId);
+            Assert.IsTrue(result == newId);*/
         }
 
         [Test]
@@ -57,23 +57,43 @@ namespace MCB.VBO.Microservices.Statements.Tests
             Assert.NotNull(statement);
         }
 
-        [Test(ExpectedResult = 30)]
-        public async Task<int> StatementRepository_2()
+        private StatementData Test(StatementData statement)
+        {
+            Assert.NotNull(statement);
+            return statement;
+        }
+
+        [Test]
+        [Timeout(5000)]
+        public void StatementRepository_2()
         {
             StatementRepository repository = new StatementRepository();
 
             DateTime fromDate = new DateTime(2020, 01, 01);
             DateTime tillDate = new DateTime(2021, 01, 01);
 
-            var statement = repository.Create(fromDate, tillDate);
+            (Guid statement, Task<StatementData> task) = repository.Create(fromDate, tillDate);
 
-            Assert.NotNull(statement);
-            Assert.IsTrue(statement.Id is Guid);
+            /*, (sd) =>
+        {
+            Assert.NotNull(sd);
+            Assert.IsTrue(sd.fromDate == fromDate);
+            Assert.IsTrue(sd.tillDate == tillDate);
+            Assert.IsTrue(sd.Status == StatusEnum.Complete);
+            Assert.IsTrue(sd.StatementTransactions.Count == 0);
+            return sd;
+        });*/
 
-            Thread.Sleep(1500);
+            task.Wait();
+            StatementData sd = task.Result;
+            Assert.NotNull(sd);
+            Assert.IsTrue(sd.fromDate == fromDate);
+            Assert.IsTrue(sd.tillDate == tillDate);
+            Assert.IsTrue(sd.Status == StatusEnum.New);
+            Assert.IsTrue(sd.StatementTransactions.Count > 0);
 
-            statement = repository.Retrive(statement.Id);
-            return (int)statement.Status;
+            //Assert.IsTrue(statement != StatusEnum.Complete);
+            //Assert.IsTrue(statement.StatementTransactions.Count == 0);
 
             /*StatementRepository repository = new StatementRepository();
 
