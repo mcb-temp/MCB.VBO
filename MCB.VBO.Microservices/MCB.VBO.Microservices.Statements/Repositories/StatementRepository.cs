@@ -4,8 +4,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MCB.VBO.Microservices.Statements.Repositories
 {
@@ -26,10 +24,12 @@ namespace MCB.VBO.Microservices.Statements.Repositories
             StatementData statement = new StatementData();
 
             statement.Id = Guid.NewGuid();
-            statement.Name = $"{statement.Id} ({request.FromDate.ToShortDateString()}:{request.TillDate.ToShortDateString()})";
+            statement.Name = $"Выписка для {request.AccountName} по счету {request.AccountNumber} за период с {request.FromDate.ToShortDateString()} по {request.TillDate.ToShortDateString()}";
             statement.Status = StatusEnum.New;
-            statement.fromDate = request.FromDate;
-            statement.tillDate = request.TillDate;
+            statement.FromDate = request.FromDate;
+            statement.TillDate = request.TillDate;
+            statement.AccountName = request.AccountName;
+            statement.AccountNumber = request.AccountNumber;
 
             Save(statement);
 

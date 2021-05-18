@@ -42,8 +42,8 @@ namespace MCB.VBO.Microservices.Statements.Tests
                 StatementTransactions = new System.Collections.Generic.List<StatementTransaction>(),
                 Name = statementRequest.AccountName,
                 Status = StatusEnum.New,
-                fromDate = statementRequest.FromDate,
-                tillDate = statementRequest.TillDate
+                FromDate = statementRequest.FromDate,
+                TillDate = statementRequest.TillDate
             });
 
             GenerateStatementService generateStatementService = new GenerateStatementService();
@@ -63,8 +63,8 @@ namespace MCB.VBO.Microservices.Statements.Tests
             Assert.AreEqual(status, 30);
 
             Assert.NotNull(statement, "StatementData is null");
-            Assert.AreEqual(statement.fromDate, statementRequest.FromDate, "Не верная дата начала периода");
-            Assert.AreEqual(statement.tillDate, statementRequest.TillDate, "Не верная дата завершения периода");
+            Assert.AreEqual(statement.FromDate, statementRequest.FromDate, "Не верная дата начала периода");
+            Assert.AreEqual(statement.TillDate, statementRequest.TillDate, "Не верная дата завершения периода");
             Assert.IsTrue(statement.Status == StatusEnum.Complete, "Не финальный статус выписки");
             Assert.IsTrue(statement.StatementTransactions.Count > 0, "Транзакции в выписке отсутствуют");
         }
@@ -105,8 +105,8 @@ namespace MCB.VBO.Microservices.Statements.Tests
 
             Assert.AreNotEqual(sd.Id, Guid.Empty, "Пустой Guid");
             Assert.NotNull(sd, "StatementData is null");
-            Assert.AreEqual(sd.fromDate, request.FromDate, "Не верная дата начала периода");
-            Assert.AreEqual(sd.tillDate, request.TillDate, "Не верная дата завершения периода");
+            Assert.AreEqual(sd.FromDate, request.FromDate, "Не верная дата начала периода");
+            Assert.AreEqual(sd.TillDate, request.TillDate, "Не верная дата завершения периода");
             Assert.IsTrue(sd.Status == StatusEnum.New, "Не финальный статус выписки");
             Assert.IsTrue(sd.StatementTransactions.Count == 0, "Откуда тут транзакции");
         }

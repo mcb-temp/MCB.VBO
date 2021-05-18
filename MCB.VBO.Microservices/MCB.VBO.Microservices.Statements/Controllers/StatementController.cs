@@ -11,6 +11,8 @@ using MCB.VBO.TemplatesLib;
 using System.Threading.Tasks;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using MCB.VBO.Microservices.Statements.Services;
+using System.Threading;
+using MCB.VBO.Microservices.Statements.Extensions;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
 {
@@ -36,6 +38,7 @@ namespace MCB.VBO.Microservices.Statements.Controllers
         {
             StatementData statement = _repository.Create(request);
 
+            //TODO
             _generateStatementService.Process(() => { StatementProcessActionAsync(statement); });
 
             return statement.Id;
@@ -47,7 +50,7 @@ namespace MCB.VBO.Microservices.Statements.Controllers
             sd.Status = StatusEnum.InProgress;
             _repository.Update(sd);
 
-            TimeSpan ts = sd.tillDate - sd.fromDate;
+            TimeSpan ts = sd.TillDate - sd.FromDate;
             double days = ts.TotalDays >= 1 ? ts.TotalDays : 1;
 
             Random r = new Random(DateTime.Now.Millisecond);
@@ -55,7 +58,7 @@ namespace MCB.VBO.Microservices.Statements.Controllers
             {
                 StatementTransaction st = new StatementTransaction();
                 st.Amount = r.Next(0, 1000000);
-                st.Date = sd.fromDate.AddDays(i);
+                st.Date = sd.FromDate.AddDays(i);
                 st.Recipient = $"{r.Next(1000000),6}{r.Next(1000000),6}";
                 st.Sender = $"{r.Next(1000000),6}{r.Next(1000000),6}";
 
@@ -72,7 +75,18 @@ namespace MCB.VBO.Microservices.Statements.Controllers
         [HttpGet]
         public StatementData GetStatement(Guid statementId)
         {
-            return _repository.Retrive(result);
+            return _repository.Retrive(statementId);
+        }
+
+        [HttpGet("transactions")]
+        [ProducesResponseType(typeof(IList<StatementTransaction>), 200)]
+        public IActionResult GetStatementTransactions(Guid statementId, int page, int limit)
+        {
+            var pagedTransactionsModel = _repository.Retrive(statementId)
+                .StatementTransactions
+                .Paginate(page, limit);
+
+            return Ok(pagedTransactionsModel);
         }
 
         [HttpGet("status")]

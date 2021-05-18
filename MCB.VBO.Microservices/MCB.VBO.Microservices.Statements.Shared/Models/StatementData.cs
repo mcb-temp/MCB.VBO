@@ -13,11 +13,15 @@ namespace MCB.VBO.Microservices.Statements.Shared.Models
 
         public List<StatementTransaction> StatementTransactions { get; set; }
 
+        public string AccountName { get; set; }
+
+        public string AccountNumber { get; set; }
+
         public StatusEnum Status { get; set; }
 
-        public DateTime fromDate { get; set; }
+        public DateTime FromDate { get; set; }
 
-        public DateTime tillDate { get; set; }
+        public DateTime TillDate { get; set; }
 
         public StatementData()
         {
