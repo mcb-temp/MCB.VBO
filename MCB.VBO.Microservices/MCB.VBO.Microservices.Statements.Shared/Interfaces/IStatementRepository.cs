@@ -7,7 +7,7 @@ namespace MCB.VBO.Microservices.Statements.Shared.Interfaces
 {
     public interface IStatementRepository
     {
-        public (Guid, Task<StatementData>) Create(DateTime fromDate, DateTime tillDate);
+        public StatementData Create(StatementRequest request);
 
         public StatementData Retrive(Guid id);
 

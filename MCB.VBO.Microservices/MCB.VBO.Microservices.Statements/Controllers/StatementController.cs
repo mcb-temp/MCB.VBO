@@ -10,6 +10,7 @@ using MCB.VBO.TemplatesLib.Builders;
 using MCB.VBO.TemplatesLib;
 using System.Threading.Tasks;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
+using MCB.VBO.Microservices.Statements.Services;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
 {
@@ -21,16 +22,57 @@ namespace MCB.VBO.Microservices.Statements.Controllers
 
         private readonly IStatementRepository _repository;
 
-        public StatementController(ILogger<StatementController> logger, IStatementRepository repository)
+        private readonly GenerateStatementService _generateStatementService;
+
+        public StatementController(ILogger<StatementController> logger, GenerateStatementService generateStatementService, IStatementRepository repository)
         {
             _logger = logger;
             _repository = repository;
+            _generateStatementService = generateStatementService;
         }
 
         [HttpPost("create")]
-        public Guid Create(DateTime fromDate, DateTime tillDate)
+        public Guid Create(StatementRequest request)
         {
-            return _repository.Create(fromDate, tillDate).Item1;
+            StatementData statement = _repository.Create(request);
+
+            _generateStatementService.Process(() => { StatementProcessActionAsync(statement); });
+
+            return statement.Id;
+        }
+
+        private Task StatementProcessActionAsync(StatementData sd)
+        {
+            Task.Delay(new Random(DateTime.Now.Millisecond).Next(0, 3) * 1000);
+            sd.Status = StatusEnum.InProgress;
+            _repository.Update(sd);
+
+            TimeSpan ts = sd.tillDate - sd.fromDate;
+            double days = ts.TotalDays >= 1 ? ts.TotalDays : 1;
+
+            Random r = new Random(DateTime.Now.Millisecond);
+            for (int i = 0; i <= days; i++)
+            {
+                StatementTransaction st = new StatementTransaction();
+                st.Amount = r.Next(0, 1000000);
+                st.Date = sd.fromDate.AddDays(i);
+                st.Recipient = $"{r.Next(1000000),6}{r.Next(1000000),6}";
+                st.Sender = $"{r.Next(1000000),6}{r.Next(1000000),6}";
+
+                sd.StatementTransactions.Add(st);
+            }
+
+            Task.Delay(new Random(DateTime.Now.Millisecond).Next(0, 3) * 1000);
+            sd.Status = StatusEnum.Complete;
+            _repository.Update(sd);
+
+            return Task.CompletedTask;
+        }
+
+        [HttpGet]
+        public StatementData GetStatement(Guid statementId)
+        {
+            return _repository.Retrive(result);
         }
 
         [HttpGet("status")]

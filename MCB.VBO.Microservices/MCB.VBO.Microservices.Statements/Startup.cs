@@ -1,4 +1,5 @@
 using MCB.VBO.Microservices.Statements.Repositories;
+using MCB.VBO.Microservices.Statements.Services;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +29,7 @@ namespace MCB.VBO.Microservices.Statements
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<GenerateStatementService>();
             services.AddSingleton<IStatementRepository, StatementRepository>();
 
             services.AddControllers();

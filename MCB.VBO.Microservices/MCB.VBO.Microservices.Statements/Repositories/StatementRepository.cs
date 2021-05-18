@@ -21,64 +21,19 @@ namespace MCB.VBO.Microservices.Statements.Repositories
                 Directory.CreateDirectory(_dbPath);
         }
 
-        public (Guid, Task<StatementData>) Create(DateTime fromDate, DateTime tillDate)
+        public StatementData Create(StatementRequest request)
         {
             StatementData statement = new StatementData();
 
             statement.Id = Guid.NewGuid();
-            statement.Name = $"{statement.Id}:{fromDate}:{tillDate}";
+            statement.Name = $"{statement.Id} ({request.FromDate.ToShortDateString()}:{request.TillDate.ToShortDateString()})";
             statement.Status = StatusEnum.New;
-            statement.fromDate = fromDate;
-            statement.tillDate = tillDate;
+            statement.fromDate = request.FromDate;
+            statement.tillDate = request.TillDate;
 
             Save(statement);
 
-            return (statement.Id, Task<StatementData>.Factory.StartNew(() =>
-            {
-                return StatementProcessActionAsync(statement);
-            }));
-        }
-
-        private StatementData StatementProcessActionAsync(StatementData sd)
-        {
-            Thread.Sleep(1000);
-            switch (sd.Status)
-            {
-                case StatusEnum.New:
-                    sd.Status = StatusEnum.InProgress;
-                    break;
-
-                case StatusEnum.InProgress:
-                    sd.Status = StatusEnum.Complete;
-
-                    TimeSpan ts = sd.tillDate - sd.fromDate;
-                    double days = ts.TotalDays >= 1 ? ts.TotalDays : 1;
-
-                    Random r = new Random(DateTime.Now.Millisecond);
-                    for (int i = 0; i <= days; i++)
-                    {
-                        StatementTransaction st = new StatementTransaction();
-                        st.Amount = r.Next(0, 1000000);
-                        st.Date = sd.fromDate.AddDays(i);
-                        st.Recipient = $"{r.Next(1000000),6}{r.Next(1000000),6}";
-                        st.Sender = $"{r.Next(1000000),6}{r.Next(1000000),6}";
-
-                        sd.StatementTransactions.Add(st);
-                    }
-                    break;
-            }
-
-            Update(sd);
-
-            if (sd.Status != StatusEnum.Complete)
-            {
-                Task.Factory.StartNew(() =>
-                {
-                    StatementProcessActionAsync(sd);
-                });
-            }
-
-            return sd;
+            return statement;
         }
 
         public StatementData Retrive(Guid id)
