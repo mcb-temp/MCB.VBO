@@ -1,4 +1,5 @@
 ﻿using MCB.VBO.Microservices.Statements.Services.Threading;
+using Prometheus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,8 @@ namespace MCB.VBO.Microservices.Statements.Services
 
         public Task Process(Action action)
         {
+            Tasks.RemoveAll(t => t.IsCanceled == true || t.IsFaulted == true || t.IsCompleted == true || t.IsCompletedSuccessfully == true);
+
             Task task = _factory.StartNew(action, _cts.Token, TaskCreationOptions.LongRunning, _taskScheduler);
             Tasks.Add(task);
             return task;

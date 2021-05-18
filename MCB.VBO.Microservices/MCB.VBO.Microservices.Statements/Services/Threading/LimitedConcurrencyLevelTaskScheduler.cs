@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prometheus;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -8,6 +9,8 @@ namespace MCB.VBO.Microservices.Statements.Services.Threading
 {
     public class LimitedConcurrencyLevelTaskScheduler : TaskScheduler
     {
+        private static readonly Gauge StatementInQueue = Metrics.CreateGauge("statement_queued", "Number of statement waiting for processing in the queue.");
+
         // Indicates whether the current thread is processing work items.
         [ThreadStatic]
         private static bool _currentThreadIsProcessingItems;
@@ -24,6 +27,8 @@ namespace MCB.VBO.Microservices.Statements.Services.Threading
         // Creates a new instance with the specified degree of parallelism.
         public LimitedConcurrencyLevelTaskScheduler(int maxDegreeOfParallelism)
         {
+            StatementInQueue.Set(0);
+            StatementInQueue.Publish();
             if (maxDegreeOfParallelism < 1) throw new ArgumentOutOfRangeException("maxDegreeOfParallelism");
             _maxDegreeOfParallelism = maxDegreeOfParallelism;
         }
@@ -38,6 +43,7 @@ namespace MCB.VBO.Microservices.Statements.Services.Threading
                 _tasks.AddLast(task);
                 if (_delegatesQueuedOrRunning < _maxDegreeOfParallelism)
                 {
+                    StatementInQueue.Inc();
                     ++_delegatesQueuedOrRunning;
                     NotifyThreadPoolOfPendingWork();
                 }
@@ -65,6 +71,7 @@ namespace MCB.VBO.Microservices.Statements.Services.Threading
                             if (_tasks.Count == 0)
                             {
                                 --_delegatesQueuedOrRunning;
+                                StatementInQueue.Dec();
                                 break;
                             }
 
@@ -92,7 +99,9 @@ namespace MCB.VBO.Microservices.Statements.Services.Threading
             if (taskWasPreviouslyQueued)
                 // Try to run the task.
                 if (TryDequeue(task))
+                {
                     return base.TryExecuteTask(task);
+                }
                 else
                     return false;
             else
@@ -102,7 +111,10 @@ namespace MCB.VBO.Microservices.Statements.Services.Threading
         // Attempt to remove a previously scheduled task from the scheduler.
         protected sealed override bool TryDequeue(Task task)
         {
-            lock (_tasks) return _tasks.Remove(task);
+            lock (_tasks)
+            {
+                return _tasks.Remove(task);
+            }
         }
 
         // Gets the maximum concurrency level supported by this scheduler.
