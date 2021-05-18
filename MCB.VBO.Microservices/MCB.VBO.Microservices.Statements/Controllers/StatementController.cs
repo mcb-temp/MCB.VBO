@@ -13,6 +13,7 @@ using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using MCB.VBO.Microservices.Statements.Services;
 using System.Threading;
 using MCB.VBO.Microservices.Statements.Extensions;
+using App.Metrics;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
 {
@@ -26,11 +27,17 @@ namespace MCB.VBO.Microservices.Statements.Controllers
 
         private readonly GenerateStatementService _generateStatementService;
 
-        public StatementController(ILogger<StatementController> logger, GenerateStatementService generateStatementService, IStatementRepository repository)
+        private readonly IMetrics _metrics;
+
+        public StatementController(ILogger<StatementController> logger, 
+            GenerateStatementService generateStatementService, 
+            IStatementRepository repository,
+            IMetrics metrics)
         {
             _logger = logger;
             _repository = repository;
             _generateStatementService = generateStatementService;
+            _metrics = metrics;
         }
 
         [HttpPost("create")]

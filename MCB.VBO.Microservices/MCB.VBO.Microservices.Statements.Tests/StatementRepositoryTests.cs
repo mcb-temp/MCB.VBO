@@ -8,6 +8,7 @@ using MCB.VBO.Microservices.Statements.Controllers;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using MCB.VBO.Microservices.Statements.Shared.Models;
 using MCB.VBO.Microservices.Statements.Services;
+using App.Metrics;
 
 namespace MCB.VBO.Microservices.Statements.Tests
 {
@@ -23,6 +24,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
         {
             var logger = new Mock<ILogger<StatementController>>();
             var repository = new Mock<IStatementRepository>();
+            var metrics = new Mock<IMetrics>();
 
             Guid newId = Guid.NewGuid();
             DateTime fromDate = new DateTime(2020, 01, 01);
@@ -50,7 +52,10 @@ namespace MCB.VBO.Microservices.Statements.Tests
 
             StatementRepository statementRepository = new StatementRepository();
 
-            StatementController statementController = new StatementController(logger.Object, generateStatementService, statementRepository);
+            StatementController statementController = new StatementController(logger.Object,
+                generateStatementService,
+                statementRepository,
+                metrics.Object);
             var result = statementController.Create(statementRequest);
 
             //Assert.IsTrue(result == newId);

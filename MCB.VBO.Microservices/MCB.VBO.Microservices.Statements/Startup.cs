@@ -1,3 +1,4 @@
+using App.Metrics;
 using MCB.VBO.Microservices.Statements.Repositories;
 using MCB.VBO.Microservices.Statements.Services;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
@@ -29,10 +30,19 @@ namespace MCB.VBO.Microservices.Statements
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<GenerateStatementService>();
+            var metrics = AppMetrics.CreateDefaultBuilder()
+                // configure other options
+                .Build();
+
+            services.AddMetrics(metrics);
+            services.AddMetricsTrackingMiddleware();
+            services.AddMetricsEndpoints();
+            services.AddMetricsReportingHostedService();
+
+            services.AddSingleton<GenerateStatementService>().AddMetrics();
             services.AddSingleton<IStatementRepository, StatementRepository>();
 
-            services.AddControllers();
+            services.AddControllers().AddMetrics();
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>
             {
@@ -49,6 +59,9 @@ namespace MCB.VBO.Microservices.Statements
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MCB.VBO.Microservices.Statements v1"));
             }
+
+            app.UseMetricsAllMiddleware();
+            app.UseMetricsAllEndpoints();
 
             app.UseHttpsRedirection();
 
