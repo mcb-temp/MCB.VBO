@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCB.VBO.TestConsole", "MCB.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCB.VBO.Microservices.Statements.Tests", "MCB.VBO.Microservices.Statements.Tests\MCB.VBO.Microservices.Statements.Tests.csproj", "{1D915344-7FDC-4949-BD5F-FDDD79A79171}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCB.VBO.Microservices.Statements.StateService", "MCB.VBO.Microservices.Statements.StateService\MCB.VBO.Microservices.Statements.StateService.csproj", "{8C79E003-C690-4465-A4DF-042F321ED9C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCB.VBO.Microservices.Statements.StateService", "MCB.VBO.Microservices.Statements.StateService\MCB.VBO.Microservices.Statements.StateService.csproj", "{8C79E003-C690-4465-A4DF-042F321ED9C8}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BDFD640B-A5D4-4523-AF1C-01062A0A8227}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCB.VBO.Microservices.Statement.Saga", "..\MCB.VBO.Microservices.Statement.Saga\MCB.VBO.Microservices.Statement.Saga.csproj", "{9FD2A799-8A4E-4A4E-AFC9-3193A53DE50D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{BDFD640B-A5D4-4523-AF1C-01062A0A8227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDFD640B-A5D4-4523-AF1C-01062A0A8227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDFD640B-A5D4-4523-AF1C-01062A0A8227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FD2A799-8A4E-4A4E-AFC9-3193A53DE50D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FD2A799-8A4E-4A4E-AFC9-3193A53DE50D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FD2A799-8A4E-4A4E-AFC9-3193A53DE50D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FD2A799-8A4E-4A4E-AFC9-3193A53DE50D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

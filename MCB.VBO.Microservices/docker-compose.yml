@@ -9,6 +9,7 @@ services:
       dockerfile: MCB.VBO.Microservices.Statements/Dockerfile
     depends_on:
       - rabbitmq
+      - mcb.vbo.microservices.statements.stateservice
     networks:
       - app-network
 
