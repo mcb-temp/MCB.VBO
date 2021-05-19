@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Hosting;
-using MCB.VBO.Microservices.Statements.Repositories;
 using System;
 using System.Linq;
 using MCB.VBO.Microservices.Statements.Shared.Models;
@@ -11,7 +9,6 @@ using MCB.VBO.TemplatesLib;
 using System.Threading.Tasks;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using MCB.VBO.Microservices.Statements.Services;
-using System.Threading;
 using MCB.VBO.Microservices.Statements.Extensions;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
@@ -39,37 +36,9 @@ namespace MCB.VBO.Microservices.Statements.Controllers
             StatementData statement = _repository.Create(request);
 
             //TODO
-            _generateStatementService.Process(() => { StatementProcessActionAsync(statement); });
+            _generateStatementService.Process(statement);
 
             return statement.Id;
-        }
-
-        private Task StatementProcessActionAsync(StatementData sd)
-        {
-            Task.Delay(new Random(DateTime.Now.Millisecond).Next(0, 3) * 1000);
-            sd.Status = StatusEnum.InProgress;
-            _repository.Update(sd);
-
-            TimeSpan ts = sd.TillDate - sd.FromDate;
-            double days = ts.TotalDays >= 1 ? ts.TotalDays : 1;
-
-            Random r = new Random(DateTime.Now.Millisecond);
-            for (int i = 0; i <= days; i++)
-            {
-                StatementTransaction st = new StatementTransaction();
-                st.Amount = r.Next(0, 1000000);
-                st.Date = sd.FromDate.AddDays(i);
-                st.Recipient = $"{r.Next(1000000),6}{r.Next(1000000),6}";
-                st.Sender = $"{r.Next(1000000),6}{r.Next(1000000),6}";
-
-                sd.StatementTransactions.Add(st);
-            }
-
-            Task.Delay(new Random(DateTime.Now.Millisecond).Next(0, 3) * 1000);
-            sd.Status = StatusEnum.Complete;
-            _repository.Update(sd);
-
-            return Task.CompletedTask;
         }
 
         [HttpGet]

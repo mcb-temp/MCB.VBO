@@ -1,4 +1,4 @@
-using NUnit.Framework;
+п»їusing NUnit.Framework;
 using MCB.VBO.Microservices.Statements.Repositories;
 using System;
 using System.Threading.Tasks;
@@ -13,6 +13,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
 {
     public class StatementRepositoryTests
     {
+        //TODO: РџРµСЂРµРїРёСЃР°С‚СЊ РЅР° С‚РµСЃС‚ СЃРµСЂРІРёСЃРѕРІ, Р° РЅРµ РєРѕРЅС‚СЂРѕР»Р»РµСЂР°
         [SetUp]
         public void Setup()
         {
@@ -46,16 +47,11 @@ namespace MCB.VBO.Microservices.Statements.Tests
                 TillDate = statementRequest.TillDate
             });
 
-            GenerateStatementService generateStatementService = new GenerateStatementService();
-
+            GenerateStatementService generateStatementService = new GenerateStatementService(repository.Object);
             StatementRepository statementRepository = new StatementRepository();
 
             StatementController statementController = new StatementController(logger.Object, generateStatementService, statementRepository);
             var result = statementController.Create(statementRequest);
-
-            //Assert.IsTrue(result == newId);
-
-            Task.WaitAll(generateStatementService.Tasks.ToArray());
 
             int status = statementController.GetStatus(result);
             StatementData statement = statementController.GetStatement(result);
@@ -63,10 +59,10 @@ namespace MCB.VBO.Microservices.Statements.Tests
             Assert.AreEqual(status, 30);
 
             Assert.NotNull(statement, "StatementData is null");
-            Assert.AreEqual(statement.FromDate, statementRequest.FromDate, "Не верная дата начала периода");
-            Assert.AreEqual(statement.TillDate, statementRequest.TillDate, "Не верная дата завершения периода");
-            Assert.IsTrue(statement.Status == StatusEnum.Complete, "Не финальный статус выписки");
-            Assert.IsTrue(statement.StatementTransactions.Count > 0, "Транзакции в выписке отсутствуют");
+            Assert.AreEqual(statement.FromDate, statementRequest.FromDate);
+            Assert.AreEqual(statement.TillDate, statementRequest.TillDate);
+            Assert.IsTrue(statement.Status == StatusEnum.Complete);
+            Assert.IsTrue(statement.StatementTransactions.Count > 0);
         }
 
         [Test]
@@ -78,7 +74,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
             {
                 FromDate = new DateTime(2020, 01, 01),
                 TillDate = new DateTime(2021, 01, 01),
-                AccountName = "ИП Тест",
+                AccountName = "РћР»РѕР»Рѕ",
                 AccountNumber = "1234 5678 9012 1234"
             };
 
@@ -97,18 +93,18 @@ namespace MCB.VBO.Microservices.Statements.Tests
             {
                 FromDate = new DateTime(2020, 01, 01),
                 TillDate = new DateTime(2021, 01, 01),
-                AccountName = "ИП Тест",
+                AccountName = "РћР›РћР›Рћ РўР•РЎРў",
                 AccountNumber = "1234 5678 9012 1234"
             };
 
             StatementData sd = repository.Create(request);
 
-            Assert.AreNotEqual(sd.Id, Guid.Empty, "Пустой Guid");
+            Assert.AreNotEqual(sd.Id, Guid.Empty, "ГЏГіГ±ГІГ®Г© Guid");
             Assert.NotNull(sd, "StatementData is null");
-            Assert.AreEqual(sd.FromDate, request.FromDate, "Не верная дата начала периода");
-            Assert.AreEqual(sd.TillDate, request.TillDate, "Не верная дата завершения периода");
-            Assert.IsTrue(sd.Status == StatusEnum.New, "Не финальный статус выписки");
-            Assert.IsTrue(sd.StatementTransactions.Count == 0, "Откуда тут транзакции");
+            Assert.AreEqual(sd.FromDate, request.FromDate, "ГЌГҐ ГўГҐГ°Г­Г Гї Г¤Г ГІГ  Г­Г Г·Г Г«Г  ГЇГҐГ°ГЁГ®Г¤Г ");
+            Assert.AreEqual(sd.TillDate, request.TillDate, "ГЌГҐ ГўГҐГ°Г­Г Гї Г¤Г ГІГ  Г§Г ГўГҐГ°ГёГҐГ­ГЁГї ГЇГҐГ°ГЁГ®Г¤Г ");
+            Assert.IsTrue(sd.Status == StatusEnum.New, "ГЌГҐ ГґГЁГ­Г Г«ГјГ­Г»Г© Г±ГІГ ГІГіГ± ГўГ»ГЇГЁГ±ГЄГЁ");
+            Assert.IsTrue(sd.StatementTransactions.Count == 0, "ГЋГІГЄГіГ¤Г  ГІГіГІ ГІГ°Г Г­Г§Г ГЄГ¶ГЁГЁ");
         }
     }
 }
