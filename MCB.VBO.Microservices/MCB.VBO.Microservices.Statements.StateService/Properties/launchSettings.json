@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "MCB.VBO.Microservices.Statements.StateService": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": "true"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
