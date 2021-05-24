@@ -1,13 +1,28 @@
-version: '3.4'
+version: '3.9'
 
 services:
   mcb.vbo.microservices.statements:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ServiceConfig__serviceDiscoveryAddress=http://consul:8500
+      - ServiceConfig__serviceAddress=http://statements:80
+      - ServiceConfig__serviceName=statements
+      - ServiceConfig__serviceId=statements-v1
+
+  mcb.vbo.microservices.statements.stateservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ServiceConfig__serviceDiscoveryAddress=http://consul:8500
+      - ServiceConfig__serviceAddress=http://statementsstate:80
+      - ServiceConfig__serviceName=statementsstate
+      - ServiceConfig__serviceId=statementsstate-v1
+
+
+  rabbitmq:
     ports:
-      - "80"
-      - "443"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - "5672:5672"
+      - "15672:15672"
+
+  consul:
+    ports:
+      - "8500"
