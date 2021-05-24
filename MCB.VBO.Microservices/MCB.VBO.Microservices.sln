@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCB.VBO.Microservices.State
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BDFD640B-A5D4-4523-AF1C-01062A0A8227}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCB.VBO.Microservices.Statement.Saga", "..\MCB.VBO.Microservices.Statement.Saga\MCB.VBO.Microservices.Statement.Saga.csproj", "{9FD2A799-8A4E-4A4E-AFC9-3193A53DE50D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCB.VBO.Microservices.Statements.Saga", "..\MCB.VBO.Microservices.Statement.Saga\MCB.VBO.Microservices.Statements.Saga.csproj", "{9FD2A799-8A4E-4A4E-AFC9-3193A53DE50D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

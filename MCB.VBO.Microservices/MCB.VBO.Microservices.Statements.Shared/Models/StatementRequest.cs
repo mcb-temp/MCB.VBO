@@ -1,4 +1,4 @@
-﻿using MCB.VBO.Microservices.Statement.Saga.Contracts;
+﻿using MCB.VBO.Microservices.Statements.Saga.Contracts;
 using System;
 using System.Text.Json.Serialization;
 

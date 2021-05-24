@@ -1,8 +1,8 @@
 ﻿using Automatonymous;
-using MCB.VBO.Microservices.Statement.Saga.Contracts;
+using MCB.VBO.Microservices.Statements.Saga.Contracts;
 using Microsoft.Extensions.Logging;
 
-namespace MCB.VBO.Microservices.Statement.Saga
+namespace MCB.VBO.Microservices.Statements.Saga
 {
     public class StatementStateMachine : MassTransitStateMachine<StatementStateInstance>
     {
@@ -25,7 +25,7 @@ namespace MCB.VBO.Microservices.Statement.Saga
                     //.Then(Processing)
                     //.ThenAsync(InitiateProcessing)
                     .TransitionTo(Received));
-            
+
             During(Received,
                 When(StatementRequestProcessing)
                 //.Then()
@@ -33,8 +33,9 @@ namespace MCB.VBO.Microservices.Statement.Saga
                 );
 
             During(Processing,
-                When(StatementRequestProcessing)
-                .TransitionTo(Processed));
+                When(StatementRequestCompleted)
+                .TransitionTo(Processed)
+                .Finalize());
         }
 
         public State Received { get; private set; }

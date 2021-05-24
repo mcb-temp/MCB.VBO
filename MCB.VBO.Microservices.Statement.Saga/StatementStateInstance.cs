@@ -1,7 +1,7 @@
 ﻿using Automatonymous;
 using System;
 
-namespace MCB.VBO.Microservices.Statement.Saga
+namespace MCB.VBO.Microservices.Statements.Saga
 {
     public class StatementStateInstance : SagaStateMachineInstance
     {

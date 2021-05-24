@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MCB.VBO.Microservices.Statement.Saga.Contracts
+namespace MCB.VBO.Microservices.Statements.Saga.Contracts
 {
     public interface IStatementRequest
     {
