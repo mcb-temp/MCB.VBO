@@ -1,8 +1,7 @@
-﻿using Docker.DotNet.Models;
+﻿using System;
 using Microsoft.Extensions.Configuration;
-using System;
 
-namespace MCB.VBO.Microservices.Statements.Docker
+namespace MCB.VBO.Microservices.Statements.Docker.Configurations
 {
     public static class ServiceConfigExtensions
     {
@@ -15,6 +14,7 @@ namespace MCB.VBO.Microservices.Statements.Docker
 
             var serviceConfig = new ServiceConfig
             {
+                
                 ServiceDiscoveryAddress = configuration.GetValue<Uri>("ServiceConfig:serviceDiscoveryAddress"),
                 ServiceAddress = configuration.GetValue<Uri>("ServiceConfig:serviceAddress"),
                 ServiceName = configuration.GetValue<string>("ServiceConfig:serviceName"),

@@ -14,13 +14,13 @@ namespace MCB.VBO.Microservices.Statements.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class StatementController : ControllerBase
+    public class StatementsController : ControllerBase
     {
-        private readonly ILogger<StatementController> _logger;
+        private readonly ILogger<StatementsController> _logger;
 
         private readonly IStatementRepository _repository;
 
-        public StatementController(ILogger<StatementController> logger, IStatementRepository repository)
+        public StatementsController(ILogger<StatementsController> logger, IStatementRepository repository)
         {
             _logger = logger;
             _repository = repository;

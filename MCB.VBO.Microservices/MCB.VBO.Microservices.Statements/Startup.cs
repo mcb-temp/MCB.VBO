@@ -1,4 +1,5 @@
 using MassTransit;
+using MCB.VBO.Microservices.Statements.Docker.Configurations;
 using MCB.VBO.Microservices.Statements.Repositories;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -25,6 +26,8 @@ namespace MCB.VBO.Microservices.Statements
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureConsul(services);
+
             services.AddHealthChecks();
             services.Configure<HealthCheckPublisherOptions>(options =>
             {
@@ -53,6 +56,12 @@ namespace MCB.VBO.Microservices.Statements
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MCB.VBO.Microservices.Statements", Version = "v1" });
             });
+        }
+
+        private void ConfigureConsul(IServiceCollection services)
+        {
+            var serviceConfig = Configuration.GetServiceConfig();
+            services.RegisterConsulServices(serviceConfig);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

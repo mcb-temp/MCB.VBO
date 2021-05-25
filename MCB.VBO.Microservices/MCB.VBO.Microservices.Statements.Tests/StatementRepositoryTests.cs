@@ -20,7 +20,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
         [Test]
         public void StatementController_1()
         {
-            var logger = new Mock<ILogger<StatementController>>();
+            var logger = new Mock<ILogger<StatementsController>>();
             var repository = new Mock<IStatementRepository>();
 
             Guid newId = Guid.NewGuid();

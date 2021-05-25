@@ -1,6 +1,20 @@
 version: '3.9'
 
 services:
+  mcb.vbo.microservices.apigateway:
+    container_name: mcb.vbo.microservices.apigateway  
+    image: ${DOCKER_REGISTRY-}mcbvbomicroservicesaapigateway
+    build:
+      context: .
+      dockerfile: MCB.VBO.Microservices.ApiGateway/Dockerfile
+    depends_on:
+      - mcb.vbo.microservices.statements
+      - consul
+    ports:
+      - "5555:5555"
+    networks:
+      - app-network
+
   mcb.vbo.microservices.statements:
     container_name: mcb.vbo.microservices.statements
     image: ${DOCKER_REGISTRY-}mcbvbomicroservicesstatements
@@ -8,23 +22,27 @@ services:
     build:
       context: .
       dockerfile: MCB.VBO.Microservices.Statements/Dockerfile
+    ports:
+      - "5000:5000"
     depends_on:
       - rabbitmq
-      - mcb.vbo.microservices.statements.stateservice
+      #- mcb.vbo.microservices.statements.stateservice
+      - consul
     networks:
       - app-network
 
-  mcb.vbo.microservices.statements.stateservice:
-    container_name: mcb.vbo.microservices.statements.stateservice
-    image: ${DOCKER_REGISTRY-}mcbvbomicroservicesstatementsstateservice
-    hostname: statement.stateservice
-    build:
-      context: .
-      dockerfile: MCB.VBO.Microservices.Statements.StateService/Dockerfile
-    depends_on:
-      - rabbitmq
-    networks:
-      - app-network
+  #mcb.vbo.microservices.statements.stateservice:
+  #  container_name: mcb.vbo.microservices.statements.stateservice
+  #  image: ${DOCKER_REGISTRY-}mcbvbomicroservicesstatementsstateservice
+  #  hostname: statement.stateservice
+  #  build:
+  #    context: .
+  #    dockerfile: MCB.VBO.Microservices.Statements.StateService/Dockerfile
+  #  depends_on:
+  #    - rabbitmq
+  #    - consul
+  #  networks:
+  #    - app-network
 
   rabbitmq:
     container_name: mcb.vbo.microservices.rabbitmq

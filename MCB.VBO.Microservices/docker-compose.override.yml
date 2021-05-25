@@ -1,22 +1,27 @@
 version: '3.9'
 
 services:
+  mcb.vbo.microservices.apigateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5555:5555"
+
   mcb.vbo.microservices.statements:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ServiceConfig__serviceDiscoveryAddress=http://consul:8500
-      - ServiceConfig__serviceAddress=http://statements:80
+      - ServiceConfig__serviceAddress=http://host.docker.internal:5000
       - ServiceConfig__serviceName=statements
       - ServiceConfig__serviceId=statements-v1
 
-  mcb.vbo.microservices.statements.stateservice:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ServiceConfig__serviceDiscoveryAddress=http://consul:8500
-      - ServiceConfig__serviceAddress=http://statementsstate:80
-      - ServiceConfig__serviceName=statementsstate
-      - ServiceConfig__serviceId=statementsstate-v1
-
+ # mcb.vbo.microservices.statements.stateservice:
+ #   environment:
+ #     - ASPNETCORE_ENVIRONMENT=Development
+ #     - ServiceConfig__serviceDiscoveryAddress=http://consul:8500
+ #     - ServiceConfig__serviceAddress=http://host.docker.internal:5005
+ #     - ServiceConfig__serviceName=statementsstate
+ #     - ServiceConfig__serviceId=statementsstate-v1
 
   rabbitmq:
     ports:
