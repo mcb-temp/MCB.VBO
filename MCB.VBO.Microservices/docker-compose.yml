@@ -1,0 +1,69 @@
+version: '3.9'
+
+services:
+  mcb.vbo.microservices.apigateway:
+    container_name: mcb.vbo.microservices.apigateway  
+    image: ${DOCKER_REGISTRY-}mcbvbomicroservicesaapigateway
+    build:
+      context: .
+      dockerfile: MCB.VBO.Microservices.ApiGateway/Dockerfile
+    depends_on:
+      - mcb.vbo.microservices.statements
+      - consul
+    ports:
+      - "5555:5555"
+    networks:
+      - app-network
+
+  mcb.vbo.microservices.statements:
+    container_name: mcb.vbo.microservices.statements
+    image: ${DOCKER_REGISTRY-}mcbvbomicroservicesstatements
+    hostname: statement.service
+    build:
+      context: .
+      dockerfile: MCB.VBO.Microservices.Statements/Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - rabbitmq
+      #- mcb.vbo.microservices.statements.stateservice
+      - consul
+    networks:
+      - app-network
+
+  #mcb.vbo.microservices.statements.stateservice:
+  #  container_name: mcb.vbo.microservices.statements.stateservice
+  #  image: ${DOCKER_REGISTRY-}mcbvbomicroservicesstatementsstateservice
+  #  hostname: statement.stateservice
+  #  build:
+  #    context: .
+  #    dockerfile: MCB.VBO.Microservices.Statements.StateService/Dockerfile
+  #  depends_on:
+  #    - rabbitmq
+  #    - consul
+  #  networks:
+  #    - app-network
+
+  rabbitmq:
+    container_name: mcb.vbo.microservices.rabbitmq
+    image: ${DOCKER_REGISTRY-}rabbitmq:3-management
+    hostname: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+
+  consul:
+    image: consul:latest
+    command: consul agent -dev -log-level=warn -ui -client=0.0.0.0
+    hostname: consul
+    container_name: consul
+    ports:
+      - "8500:8500"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

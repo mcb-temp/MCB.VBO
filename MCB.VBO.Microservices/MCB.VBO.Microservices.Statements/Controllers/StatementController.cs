@@ -8,35 +8,29 @@ using MCB.VBO.TemplatesLib.Builders;
 using MCB.VBO.TemplatesLib;
 using System.Threading.Tasks;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
-using MCB.VBO.Microservices.Statements.Services;
 using MCB.VBO.Microservices.Statements.Extensions;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class StatementController : ControllerBase
+    public class StatementsController : ControllerBase
     {
-        private readonly ILogger<StatementController> _logger;
+        private readonly ILogger<StatementsController> _logger;
 
         private readonly IStatementRepository _repository;
 
-        private readonly GenerateStatementService _generateStatementService;
-
-        public StatementController(ILogger<StatementController> logger, GenerateStatementService generateStatementService, IStatementRepository repository)
+        public StatementsController(ILogger<StatementsController> logger, IStatementRepository repository)
         {
             _logger = logger;
             _repository = repository;
-            _generateStatementService = generateStatementService;
         }
 
         [HttpPost("create")]
         public Guid Create(StatementRequest request)
         {
             StatementData statement = _repository.Create(request);
-
-            //TODO
-            _generateStatementService.Process(statement);
+            request.Id = statement.Id;
 
             return statement.Id;
         }
