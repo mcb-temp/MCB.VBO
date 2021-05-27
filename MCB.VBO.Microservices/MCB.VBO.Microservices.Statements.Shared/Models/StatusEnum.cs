@@ -9,6 +9,7 @@ namespace MCB.VBO.Microservices.Statements.Shared.Models
     {
         New = 10,
         InProgress = 20,
+        Failed = 25,
         Complete = 30
     }
 }

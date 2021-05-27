@@ -3,15 +3,15 @@ using System.Threading.Tasks;
 using Consul;
 using Microsoft.Extensions.Hosting;
 
-namespace MCB.VBO.Microservices.Statements.Docker.Configurations
+namespace MCB.VBO.Microservices.Configuration.ServiceDiscovery
 {
-    public class ServiceDiscoveryHostedService : IHostedService
+    public class ConsulClientHostedService : IHostedService
     {
         private readonly IConsulClient _client;
         private readonly ServiceConfig _config;
         private string _registrationId;
 
-        public ServiceDiscoveryHostedService(IConsulClient client, ServiceConfig config)
+        public ConsulClientHostedService(IConsulClient client, ServiceConfig config)
         {
             _client = client;
             _config = config;

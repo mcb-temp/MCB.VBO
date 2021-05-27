@@ -51,6 +51,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    restart: always
     networks:
       - app-network
 
@@ -61,6 +62,7 @@ services:
     container_name: consul
     ports:
       - "8500:8500"
+    restart: always
     networks:
       - app-network
 

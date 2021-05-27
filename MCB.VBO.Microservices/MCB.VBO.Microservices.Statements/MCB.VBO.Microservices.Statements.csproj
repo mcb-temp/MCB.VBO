@@ -21,7 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MCB.VBO.Microservices.Statements.Docker\MCB.VBO.Microservices.Statements.Docker.csproj" />
+    <ProjectReference Include="..\..\MCB.VBO.Microservices.RabbitMQ\MCB.VBO.Microservices.RabbitMQ.csproj" />
+    <ProjectReference Include="..\MCB.VBO.Microservices.Statements.Docker\MCB.VBO.Microservices.Configuration.csproj" />
     <ProjectReference Include="..\MCB.VBO.Microservices.Statements.Shared\MCB.VBO.Microservices.Statements.Shared.csproj" />
     <ProjectReference Include="..\MCB.VBO.TemplatesLib\MCB.VBO.TemplatesLib.csproj" />
   </ItemGroup>

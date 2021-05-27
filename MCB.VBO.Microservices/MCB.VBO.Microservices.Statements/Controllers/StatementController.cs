@@ -9,6 +9,8 @@ using MCB.VBO.TemplatesLib;
 using System.Threading.Tasks;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using MCB.VBO.Microservices.Statements.Extensions;
+using MCB.VBO.Microservices.RabbitMQ;
+using Newtonsoft.Json;
 
 namespace MCB.VBO.Microservices.Statements.Controllers
 {
@@ -17,20 +19,22 @@ namespace MCB.VBO.Microservices.Statements.Controllers
     public class StatementsController : ControllerBase
     {
         private readonly ILogger<StatementsController> _logger;
-
         private readonly IStatementRepository _repository;
+        private readonly IPublisher _publisher;
 
-        public StatementsController(ILogger<StatementsController> logger, IStatementRepository repository)
+        public StatementsController(ILogger<StatementsController> logger, IStatementRepository repository, IPublisher publisher)
         {
             _logger = logger;
             _repository = repository;
+            _publisher = publisher;
         }
 
         [HttpPost("create")]
         public Guid Create(StatementRequest request)
         {
             StatementData statement = _repository.Create(request);
-            request.Id = statement.Id;
+
+            _publisher.Publish(JsonConvert.SerializeObject(statement), "statements.created", null);
 
             return statement.Id;
         }

@@ -1,9 +1,10 @@
 ﻿using Consul;
+using MCB.VBO.Microservices.Configuration.ServiceDiscovery;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 
-namespace MCB.VBO.Microservices.Statements.Docker.Configurations
+namespace MCB.VBO.Microservices.Configuration.Extensions
 {
     public static class ServiceDiscoveryExtensions
     {
@@ -17,7 +18,7 @@ namespace MCB.VBO.Microservices.Statements.Docker.Configurations
             var consulClient = CreateConsulClient(serviceConfig);
 
             services.AddSingleton(serviceConfig);
-            services.AddSingleton<IHostedService, ServiceDiscoveryHostedService>();
+            services.AddSingleton<IHostedService, ConsulClientHostedService>();
             services.AddSingleton<IConsulClient, ConsulClient>(p => consulClient);
         }
 

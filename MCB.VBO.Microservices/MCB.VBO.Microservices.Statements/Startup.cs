@@ -1,5 +1,8 @@
 using MassTransit;
-using MCB.VBO.Microservices.Statements.Docker.Configurations;
+using MCB.VBO.Microservices.Configuration.Extensions;
+using MCB.VBO.Microservices.RabbitMQ;
+using MCB.VBO.Microservices.Statements.Actions;
+using MCB.VBO.Microservices.Statements.Listeners;
 using MCB.VBO.Microservices.Statements.Repositories;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using System;
 
 namespace MCB.VBO.Microservices.Statements
@@ -35,20 +39,26 @@ namespace MCB.VBO.Microservices.Statements
                 options.Predicate = (check) => check.Tags.Contains("ready");
             });
 
+            //
             services.AddSingleton<IStatementRepository, StatementRepository>();
 
-            services.AddMassTransit(x =>
-            {
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.Host("host.docker.internal", x =>
-                    {
-                        x.Username("guest");
-                        x.Password("guest");
-                    });
-                });
-            });
-            services.AddMassTransitHostedService();
+            //
+            services.AddSingleton<StatementCreateAction>();
+
+            // RabbitMQ
+            services.AddSingleton<IConnectionProvider>(new ConnectionProvider("amqp://guest:guest@mcb.vbo.microservices.rabbitmq:5672"));
+            services.AddSingleton<IPublisher>(x => new Publisher(x.GetService<IConnectionProvider>(),
+                    "statements_exchange",
+                    ExchangeType.Topic));
+
+            services.AddSingleton<ISubscriber>(x => new Subscriber(x.GetService<IConnectionProvider>(),
+               "statements_exchange",
+               "statements_response",
+               "statements.created",
+               ExchangeType.Topic));
+
+            // Listeners
+            services.AddHostedService<StatementCreateListener>();
 
             services.AddControllers();
 

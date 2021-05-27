@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MCB.VBO.Microservices.Statements.Docker.Configurations
+namespace MCB.VBO.Microservices.Configuration
 {
     public class ServiceConfig
     {

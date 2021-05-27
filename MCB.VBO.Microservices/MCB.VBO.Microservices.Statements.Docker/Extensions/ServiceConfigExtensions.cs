@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 
-namespace MCB.VBO.Microservices.Statements.Docker.Configurations
+namespace MCB.VBO.Microservices.Configuration.Extensions
 {
     public static class ServiceConfigExtensions
     {
@@ -14,7 +14,7 @@ namespace MCB.VBO.Microservices.Statements.Docker.Configurations
 
             var serviceConfig = new ServiceConfig
             {
-                
+
                 ServiceDiscoveryAddress = configuration.GetValue<Uri>("ServiceConfig:serviceDiscoveryAddress"),
                 ServiceAddress = configuration.GetValue<Uri>("ServiceConfig:serviceAddress"),
                 ServiceName = configuration.GetValue<string>("ServiceConfig:serviceName"),
