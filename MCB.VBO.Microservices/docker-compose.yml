@@ -1,20 +1,6 @@
 version: '3.9'
 
 services:
-  mcb.vbo.microservices.apigateway:
-    container_name: mcb.vbo.microservices.apigateway  
-    image: ${DOCKER_REGISTRY-}mcbvbomicroservicesaapigateway
-    build:
-      context: .
-      dockerfile: MCB.VBO.Microservices.ApiGateway/Dockerfile
-    depends_on:
-      - mcb.vbo.microservices.statements
-      - consul
-    ports:
-      - "5555:5555"
-    networks:
-      - app-network
-
   mcb.vbo.microservices.statements:
     container_name: mcb.vbo.microservices.statements
     image: ${DOCKER_REGISTRY-}mcbvbomicroservicesstatements
@@ -27,22 +13,24 @@ services:
     depends_on:
       - rabbitmq
       #- mcb.vbo.microservices.statements.stateservice
-      - consul
     networks:
       - app-network
+    volumes:
+      - D:\docker_volume:/app/bin/Debug/net5.0/db
 
-  #mcb.vbo.microservices.statements.stateservice:
-  #  container_name: mcb.vbo.microservices.statements.stateservice
-  #  image: ${DOCKER_REGISTRY-}mcbvbomicroservicesstatementsstateservice
-  #  hostname: statement.stateservice
-  #  build:
-  #    context: .
-  #    dockerfile: MCB.VBO.Microservices.Statements.StateService/Dockerfile
-  #  depends_on:
-  #    - rabbitmq
-  #    - consul
-  #  networks:
-  #    - app-network
+  mcb.vbo.microservices.statements.workerhost:
+    container_name: mcb.vbo.microservices.statements.workerhost
+    image: ${DOCKER_REGISTRY-}mcbvbomicroservicesstatementsworkerhost
+    hostname: statement.workerhost
+    build:
+      context: .
+      dockerfile: MCB.VBO.Microservices.Statements.WorkerHost/Dockerfile
+    depends_on:
+       - rabbitmq
+    networks:
+      - app-network
+    volumes:
+      - D:\docker_volume:/app/bin/Debug/net5.0/db
 
   rabbitmq:
     container_name: mcb.vbo.microservices.rabbitmq
@@ -51,17 +39,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    restart: always
-    networks:
-      - app-network
-
-  consul:
-    image: consul:latest
-    command: consul agent -dev -log-level=warn -ui -client=0.0.0.0
-    hostname: consul
-    container_name: consul
-    ports:
-      - "8500:8500"
     restart: always
     networks:
       - app-network

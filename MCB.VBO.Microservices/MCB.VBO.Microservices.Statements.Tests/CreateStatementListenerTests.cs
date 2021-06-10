@@ -1,18 +1,16 @@
 ﻿using MCB.VBO.Microservices.RabbitMQ;
-using MCB.VBO.Microservices.Statements.Actions;
-using MCB.VBO.Microservices.Statements.Listeners;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using MCB.VBO.Microservices.Statements.Shared.Models;
+using MCB.VBO.Microservices.Statements.WorkerHost.Listeners;
+using MCB.VBO.Microservices.Statements.WorkerHost.Worker;
 using Moq;
 using NUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Fakes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MCB.VBO.Microservices.Statements.Tests
 {
@@ -77,7 +75,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
                 "statements.created",
                 ExchangeType.Topic);
 
-            StatementCreateAction action = new StatementCreateAction(repository.Object);
+            StatementCreateWorker action = new StatementCreateWorker(repository.Object);
             StatementCreateListener listener = new StatementCreateListener(subscriber, action);
 
             CancellationTokenSource cts = new CancellationTokenSource();

@@ -13,17 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit.AspNetCore" Version="7.1.8" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.8" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MCB.VBO.Microservices.RabbitMQ\MCB.VBO.Microservices.RabbitMQ.csproj" />
-    <ProjectReference Include="..\MCB.VBO.Microservices.Statements.Docker\MCB.VBO.Microservices.Configuration.csproj" />
+    <ProjectReference Include="..\MCB.VBO.Microservices.RabbitMQ\MCB.VBO.Microservices.RabbitMQ.csproj" />
     <ProjectReference Include="..\MCB.VBO.Microservices.Statements.Shared\MCB.VBO.Microservices.Statements.Shared.csproj" />
-    <ProjectReference Include="..\MCB.VBO.TemplatesLib\MCB.VBO.TemplatesLib.csproj" />
   </ItemGroup>
 </Project>

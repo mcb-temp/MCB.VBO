@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using MCB.VBO.Microservices.Statements.Shared.Models;
-using MCB.VBO.TemplatesLib.Builders;
-using MCB.VBO.TemplatesLib;
 using System.Threading.Tasks;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using MCB.VBO.Microservices.Statements.Extensions;
@@ -80,18 +78,13 @@ namespace MCB.VBO.Microservices.Statements.Controllers
         [HttpGet("download")]
         public async Task<FileStreamResult> GetStatementFile(Guid id)
         {
-            WordDocumentBuilder builder = new WordDocumentBuilder();
-            DocumentDirector director = new DocumentDirector();
-
-            StatementData data = _repository.Retrive(id);
-
-            director.CreateWordDoc(builder, data);
-            var mem = builder.GetResult();
-
-            return new FileStreamResult(mem, "application/octet-stream")
+            throw new NotImplementedException();
+            /*
+             * return new FileStreamResult(new MemoryStream(), "application/octet-stream")
             {
                 FileDownloadName = $"{id}.docx"
             };
+            */
         }
 
         [HttpGet("history")]

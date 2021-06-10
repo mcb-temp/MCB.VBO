@@ -1,10 +1,6 @@
-using MassTransit;
-using MCB.VBO.Microservices.Configuration.Extensions;
 using MCB.VBO.Microservices.RabbitMQ;
-using MCB.VBO.Microservices.Statements.Actions;
-using MCB.VBO.Microservices.Statements.Listeners;
-using MCB.VBO.Microservices.Statements.Repositories;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
+using MCB.VBO.Microservices.RabbitMQ.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 using System;
+using MCB.VBO.Microservices.Statements.Shared.Repositories;
 
 namespace MCB.VBO.Microservices.Statements
 {
@@ -30,9 +27,8 @@ namespace MCB.VBO.Microservices.Statements
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureConsul(services);
-
             services.AddHealthChecks();
+
             services.Configure<HealthCheckPublisherOptions>(options =>
             {
                 options.Delay = TimeSpan.FromSeconds(2);
@@ -43,22 +39,7 @@ namespace MCB.VBO.Microservices.Statements
             services.AddSingleton<IStatementRepository, StatementRepository>();
 
             //
-            services.AddSingleton<StatementCreateAction>();
-
-            // RabbitMQ
-            services.AddSingleton<IConnectionProvider>(new ConnectionProvider("amqp://guest:guest@mcb.vbo.microservices.rabbitmq:5672"));
-            services.AddSingleton<IPublisher>(x => new Publisher(x.GetService<IConnectionProvider>(),
-                    "statements_exchange",
-                    ExchangeType.Topic));
-
-            services.AddSingleton<ISubscriber>(x => new Subscriber(x.GetService<IConnectionProvider>(),
-               "statements_exchange",
-               "statements_response",
-               "statements.created",
-               ExchangeType.Topic));
-
-            // Listeners
-            services.AddHostedService<StatementCreateListener>();
+            ConfigureRabbit(services);
 
             services.AddControllers();
 
@@ -68,10 +49,17 @@ namespace MCB.VBO.Microservices.Statements
             });
         }
 
-        private void ConfigureConsul(IServiceCollection services)
+
+        private void ConfigureRabbit(IServiceCollection services)
         {
-            var serviceConfig = Configuration.GetServiceConfig();
-            services.RegisterConsulServices(serviceConfig);
+            // RabbitMQ
+            var rabbitConfig = Configuration.GetRabbitConfig();
+
+            services.AddSingleton<IConnectionProvider>(new ConnectionProvider($"amqp://{rabbitConfig.User}:{rabbitConfig.Password}@{rabbitConfig.Server}:{rabbitConfig.Port}"));
+
+            services.AddSingleton<IPublisher>(x => new Publisher(x.GetService<IConnectionProvider>(),
+                    "statements_exchange",
+                    ExchangeType.Topic));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,10 +82,7 @@ namespace MCB.VBO.Microservices.Statements
             {
                 endpoints.MapControllers();
 
-                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions()
-                {
-                    Predicate = (check) => check.Tags.Contains("ready"),
-                });
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions());
 
                 endpoints.MapHealthChecks("/health/live", new HealthCheckOptions());
             });

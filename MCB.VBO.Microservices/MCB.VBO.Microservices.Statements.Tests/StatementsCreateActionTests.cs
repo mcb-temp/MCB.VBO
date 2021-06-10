@@ -3,7 +3,7 @@ using System;
 using Moq;
 using MCB.VBO.Microservices.Statements.Shared.Interfaces;
 using MCB.VBO.Microservices.Statements.Shared.Models;
-using MCB.VBO.Microservices.Statements.Actions;
+using MCB.VBO.Microservices.Statements.WorkerHost.Worker;
 
 namespace MCB.VBO.Microservices.Statements.Tests
 {
@@ -54,7 +54,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
                 repository.Setup(x => x.Retrive(requestId)).Returns(sd);
             });
 
-            StatementCreateAction action = new StatementCreateAction(repository.Object);
+            StatementCreateWorker action = new StatementCreateWorker(repository.Object);
 
             action.Execute(requestId).GetAwaiter().GetResult();
 
@@ -104,7 +104,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
             });
 
 
-            StatementCreateAction action = new StatementCreateAction(repository.Object);
+            StatementCreateWorker action = new StatementCreateWorker(repository.Object);
 
             Assert.Throws<NullReferenceException>(() => action.Execute(Guid.NewGuid()).GetAwaiter().GetResult());
 

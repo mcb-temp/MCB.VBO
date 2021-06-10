@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>dotnet-MCB.VBO.Microservices.Statements.StateService-BBE977E6-2379-4B5D-B4D4-947E204D1101</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MCB.VBO.Microservices.RabbitMQ\MCB.VBO.Microservices.RabbitMQ.csproj" />
+    <ProjectReference Include="..\MCB.VBO.Microservices.Statements.Shared\MCB.VBO.Microservices.Statements.Shared.csproj" />
+  </ItemGroup>
+</Project>

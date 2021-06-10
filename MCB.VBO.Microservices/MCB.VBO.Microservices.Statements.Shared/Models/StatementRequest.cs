@@ -1,10 +1,9 @@
-﻿using MCB.VBO.Microservices.Statement.Saga.Contracts;
-using System;
+﻿using System;
 using System.Text.Json.Serialization;
 
 namespace MCB.VBO.Microservices.Statements.Shared.Models
 {
-    public class StatementRequest : IStatementRequest
+    public class StatementRequest
     {
         [JsonIgnore]
         public Guid Id { get; set; }
