@@ -35,12 +35,12 @@ namespace MCB.VBO.Microservices.Statements.Tests
             {
                 Id = requestId,
                 StatementTransactions = new System.Collections.Generic.List<StatementTransaction>(),
-                Name = statementRequest.AccountName,
                 Status = StatusEnum.New,
                 FromDate = statementRequest.FromDate,
                 TillDate = statementRequest.TillDate,
                 AccountName = statementRequest.AccountName,
-                AccountNumber = statementRequest.AccountNumber
+                AccountNumber = statementRequest.AccountNumber//,
+                //BalanceIncome = statementRequest.
             };
 
             var repository = new Mock<IStatementRepository>();
@@ -84,7 +84,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
             {
                 Id = requestId,
                 StatementTransactions = new System.Collections.Generic.List<StatementTransaction>(),
-                Name = statementRequest.AccountName,
+
                 Status = StatusEnum.New,
                 FromDate = statementRequest.FromDate,
                 TillDate = statementRequest.TillDate,

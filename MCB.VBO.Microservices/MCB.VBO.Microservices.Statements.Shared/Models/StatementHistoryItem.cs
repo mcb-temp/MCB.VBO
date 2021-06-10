@@ -9,7 +9,15 @@ namespace MCB.VBO.Microservices.Statements.Shared.Models
     {
         public Guid Id { get; set; }
 
-        public string Name { get; set; }
+        public DateTime FromDate { get; set; }
+
+        public DateTime TillDate { get; set; }
+
+        public string AccountName { get; set; }
+
+        public string AccountNumber { get; set; }
+
+        public DateTime RequestDate { get; set; }
 
         public int Status { get; set; }
     }

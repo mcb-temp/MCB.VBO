@@ -27,7 +27,7 @@ namespace MCB.VBO.Microservices.Statements.Tests
             //ConfigureQueueBinding(_rabbitServer, "statement_exchange", "statements_response");
         }
 
-        [Test]
+        //[Test]
         public void Test()
         {
             //TODO: Посмотреть другие варианты. Класс ConnectionFactory sealed. Обертка больше не работает похоже.
@@ -50,7 +50,6 @@ namespace MCB.VBO.Microservices.Statements.Tests
             {
                 Id = requestId,
                 StatementTransactions = new List<StatementTransaction>(),
-                Name = statementRequest.AccountName,
                 Status = StatusEnum.New,
                 FromDate = statementRequest.FromDate,
                 TillDate = statementRequest.TillDate,

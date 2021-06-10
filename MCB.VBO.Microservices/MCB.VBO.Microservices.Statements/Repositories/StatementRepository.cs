@@ -24,12 +24,12 @@ namespace MCB.VBO.Microservices.Statements.Repositories
             StatementData statement = new StatementData();
 
             statement.Id = Guid.NewGuid();
-            statement.Name = $"Выписка для {request.AccountName} по счету {request.AccountNumber} за период с {request.FromDate.ToShortDateString()} по {request.TillDate.ToShortDateString()}";
             statement.Status = StatusEnum.New;
             statement.FromDate = request.FromDate;
             statement.TillDate = request.TillDate;
             statement.AccountName = request.AccountName;
             statement.AccountNumber = request.AccountNumber;
+            statement.RequestDate = DateTime.Now;
 
             Save(statement);
 

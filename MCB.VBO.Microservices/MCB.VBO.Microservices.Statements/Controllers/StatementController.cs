@@ -32,7 +32,9 @@ namespace MCB.VBO.Microservices.Statements.Controllers
         [HttpPost("create")]
         public Guid Create(StatementRequest request)
         {
+            _logger.LogInformation($"StatementRequest create {request.AccountNumber}, {request.FromDate},{request.TillDate}");
             StatementData statement = _repository.Create(request);
+            _logger.LogInformation($"StatementRequest Id = {statement.Id}");
 
             _publisher.Publish(JsonConvert.SerializeObject(statement), "statements.created", null);
 
@@ -97,7 +99,16 @@ namespace MCB.VBO.Microservices.Statements.Controllers
         {
             var statementsList = _repository.ListAll();
 
-            return statementsList.Select(s => new StatementHistoryItem { Id = s.Id, Name = s.Name, Status = (int)s.Status });
+            return statementsList.Select(s => new StatementHistoryItem
+            {
+                Id = s.Id,
+                AccountName = s.AccountName,
+                AccountNumber = s.AccountNumber,
+                FromDate = s.FromDate,
+                TillDate = s.TillDate,
+                RequestDate = s.RequestDate,
+                Status = (int)s.Status
+            });
         }
     }
 }

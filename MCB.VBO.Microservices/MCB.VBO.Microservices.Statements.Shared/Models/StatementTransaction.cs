@@ -6,10 +6,16 @@ namespace MCB.VBO.Microservices.Statements.Shared.Models
     {
         public DateTime Date { get; set; }
 
-        public decimal Amount { get; set; }
+        public int DocumentNumber { get; set; }
 
-        public string Recipient { get; set; }
+        public string Inn { get; set; }
 
-        public string Sender { get; set; }
+        public decimal Debit { get; set; }
+
+        public decimal Credit { get; set; }
+
+        public string Client { get; set; }
+
+        public string Description { get; set; }
     }
 }
